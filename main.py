@@ -1,16 +1,52 @@
-# This is a sample Python script.
+import random
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def roll():
+    min_value = 1
+    max_value = 6
+    roll = random.randint(min_value, max_value)
 
+    return roll
+while True:
+    players = input("Enter the number of players (2-4): ")
+    if players.isdigit():
+        players = int(players)
+        if 2 <= players <= 4:
+            break
+        else:
+            print("Must be between 2 - 4 players.")
+    else:
+        print('Invalid, try again')
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+max_score = 50
+players_scores = [0 for _ in range(players)]
 
+while max(players_scores) < max_score:
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    for player_idx in range(players):
+        print('\nPlayer', player_idx + 1, "turn has just started")
+        print("U total score is:", players_scores[player_idx], '\n')
+        current_score = 0
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        while True:
+            should_roll = input("Would u like to roll (y)?" )
+            if should_roll.lower() != "y":
+                break
+
+            value = roll()
+            if value == 1:
+                print("U rolled a 1! Turn done!")
+                current_score = 0
+                break
+            else:
+                current_score += value
+                print("U rolled a:", value)
+
+            print("U score is:", current_score)
+
+        players_scores[player_idx] += current_score
+        print("U total score is:", players_scores[player_idx])
+
+max_score = max(players_scores)
+winning_idx = players_scores.index(max_score)
+print("Player number", winning_idx + 1, "is winner with a score of:", max_score)
+
