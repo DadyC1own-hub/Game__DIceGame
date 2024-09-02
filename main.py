@@ -1,52 +1,57 @@
 import random
 
-def roll():
-    min_value = 1
-    max_value = 6
-    roll = random.randint(min_value, max_value)
+def roll_dice():
+    return random.randint(1, 6)
 
-    return roll
-while True:
-    players = input("Enter the number of players (2-4): ")
-    if players.isdigit():
-        players = int(players)
-        if 2 <= players <= 4:
+def get_number_of_players():
+    while True:
+        try:
+            num_players = int(input("Enter the number of players (2-4): "))
+            if 2 <= num_players <= 4:
+                return num_players
+            else:
+                print("Number of players must be between 2 and 4.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+def play_turn(player_num, player_score):
+    print(f'\nPlayer {player_num} turn has just started')
+    print(f"Your total score is: {player_score}\n")
+    current_score = 0
+
+    while True:
+        should_roll = input("Would you like to roll (y/n)? ").lower()
+        if should_roll != "y":
+            break
+
+        rolled_value = roll_dice()
+        if rolled_value == 1:
+            print("You rolled a 1! Turn over!")
+            current_score = 0
             break
         else:
-            print("Must be between 2 - 4 players.")
-    else:
-        print('Invalid, try again')
+            current_score += rolled_value
+            print(f"You rolled a: {rolled_value}")
+            print(f"Your current score is: {current_score}")
 
-max_score = 50
-players_scores = [0 for _ in range(players)]
+    return current_score
 
-while max(players_scores) < max_score:
+def main():
+    max_score = 50
+    num_players = get_number_of_players()
+    players_scores = [0 for _ in range(num_players)]
 
-    for player_idx in range(players):
-        print('\nPlayer', player_idx + 1, "turn has just started")
-        print("U total score is:", players_scores[player_idx], '\n')
-        current_score = 0
+    while max(players_scores) < max_score:
+        for player_idx in range(num_players):
+            current_score = play_turn(player_idx + 1, players_scores[player_idx])
+            players_scores[player_idx] += current_score
+            print(f"Your total score is now: {players_scores[player_idx]}")
 
-        while True:
-            should_roll = input("Would u like to roll (y)?" )
-            if should_roll.lower() != "y":
+            if players_scores[player_idx] >= max_score:
                 break
 
-            value = roll()
-            if value == 1:
-                print("U rolled a 1! Turn done!")
-                current_score = 0
-                break
-            else:
-                current_score += value
-                print("U rolled a:", value)
+    winner_idx = players_scores.index(max(players_scores))
+    print(f"Player {winner_idx + 1} is the winner with a score of: {players_scores[winner_idx]}")
 
-            print("U score is:", current_score)
-
-        players_scores[player_idx] += current_score
-        print("U total score is:", players_scores[player_idx])
-
-max_score = max(players_scores)
-winning_idx = players_scores.index(max_score)
-print("Player number", winning_idx + 1, "is winner with a score of:", max_score)
-
+if __name__ == "__main__":
+    main()
